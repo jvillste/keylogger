@@ -1,6 +1,6 @@
-# keylogger
+# Keylogger
 
-prints key presses as key codes with timestamps
-ignores modifier keys and keys pressed with modifiers
-intended for collecting data for keyboard layout design
-originally from https://github.com/caseyscarborough/keylogger
+Prints key presses as key codes with timestamps. Ignores modifier keys
+and keys pressed with modifiers. Intended for collecting data for
+keyboard layout design. Originally from
+https://github.com/caseyscarborough/keylogger
