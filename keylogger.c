@@ -3,10 +3,17 @@
 CGEventRef CGEventCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *refcon) {
   CGEventFlags flags = CGEventGetFlags(event);
 
-  if(CGEventGetIntegerValueField(event, kCGKeyboardEventAutorepeat) != 0
-     || flags & kCGEventFlagMaskCommand
+  unsigned long long key_code = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
+
+  if(flags & kCGEventFlagMaskCommand
      || flags & kCGEventFlagMaskAlternate
      || flags & kCGEventFlagMaskControl)
+    {
+      key_code = 49; // space
+    }
+
+
+  if(CGEventGetIntegerValueField(event, kCGKeyboardEventAutorepeat) != 0)
     {
       return event;
     }
@@ -15,7 +22,7 @@ CGEventRef CGEventCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef e
   clock_gettime(CLOCK_MONOTONIC_RAW, &time_now);
 
   printf(", %llu %lu",
-         CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode),
+         key_code,
          time_now.tv_sec * 1000000 + time_now.tv_nsec / 1000);
   fflush(stdout);
   return event;
@@ -23,7 +30,7 @@ CGEventRef CGEventCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef e
 
 int main(int argc, const char *argv[]) {
 
-  CFMachPortRef eventTap = CGEventTapCreate(kCGSessionEventTap,
+  CFMachPortRef eventTap = CGEventTapCreate(kCGHIDEventTap, // kCGAnnotatedSessionEventTap, // kCGSessionEventTap,
                                             kCGHeadInsertEventTap,
                                             0,
                                             CGEventMaskBit(kCGEventKeyDown),
